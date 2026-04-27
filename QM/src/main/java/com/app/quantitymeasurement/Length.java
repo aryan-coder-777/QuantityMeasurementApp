@@ -5,10 +5,12 @@ public class Length {
     private final double value;
     private final LengthUnit unit;
 
-    // 🔹 Enum for units
+    // 🔹 Enum with all units (UC4)
     public enum LengthUnit {
         FEET(12.0),
-        INCHES(1.0);
+        INCHES(1.0),
+        YARDS(36.0),          // 1 yard = 36 inches
+        CENTIMETERS(0.393701); // 1 cm = 0.393701 inches
 
         private final double conversionFactor;
 
@@ -35,7 +37,7 @@ public class Length {
         return this.value * this.unit.getConversionFactor();
     }
 
-    // 🔹 Compare method
+    // 🔹 Compare logic
     public boolean compare(Length other) {
         return Double.compare(
                 this.convertToBaseUnit(),
