@@ -3,40 +3,53 @@ package com.apps.quantitymeasurement;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuantityMeasurementAppTest {
+public class QuantityTest {
 
     @Test
-    public void testFeetToInchesConversion() {
+    public void testKgEqualsGram() {
 
-        Length l = new Length(1, LengthUnit.FEET);
+        QuantityWeight w1 = new QuantityWeight(1, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000, WeightUnit.GRAM);
 
-        Length result =
-                QuantityMeasurementApp.convert(l, LengthUnit.INCHES);
-
-        assertEquals(new Length(12, LengthUnit.INCHES), result);
+        assertTrue(w1.equals(w2));
     }
 
     @Test
-    public void testAdditionFeetInchesToFeet() {
+    public void testConvertPoundToKg() {
 
-        Length l1 = new Length(1, LengthUnit.FEET);
-        Length l2 = new Length(12, LengthUnit.INCHES);
+        QuantityWeight w = new QuantityWeight(2.20462, WeightUnit.POUND);
 
-        Length result =
-                QuantityMeasurementApp.add(l1, l2, LengthUnit.FEET);
+        QuantityWeight result =
+                QuantityMeasurementApp.convert(w, WeightUnit.KILOGRAM);
 
-        assertEquals(new Length(2, LengthUnit.FEET), result);
+        assertTrue(result.equals(
+                new QuantityWeight(1, WeightUnit.KILOGRAM)));
     }
 
     @Test
-    public void testAdditionFeetInchesToYards() {
+    public void testAddKgAndGram() {
 
-        Length l1 = new Length(1, LengthUnit.FEET);
-        Length l2 = new Length(12, LengthUnit.INCHES);
+        QuantityWeight w1 = new QuantityWeight(1, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000, WeightUnit.GRAM);
 
-        Length result =
-                QuantityMeasurementApp.add(l1, l2, LengthUnit.YARDS);
+        QuantityWeight result =
+                QuantityMeasurementApp.add(w1, w2, WeightUnit.KILOGRAM);
 
-        assertTrue(result.equals(new Length(0.6667, LengthUnit.YARDS)));
+        assertEquals(
+                new QuantityWeight(2, WeightUnit.KILOGRAM),
+                result);
+    }
+
+    @Test
+    public void testAddPoundAndKg() {
+
+        QuantityWeight w1 = new QuantityWeight(2.20462, WeightUnit.POUND);
+        QuantityWeight w2 = new QuantityWeight(1, WeightUnit.KILOGRAM);
+
+        QuantityWeight result =
+                QuantityMeasurementApp.add(w1, w2, WeightUnit.POUND);
+
+        assertTrue(result.equals(
+                new QuantityWeight(4.40924, WeightUnit.POUND)));
     }
 }

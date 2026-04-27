@@ -2,19 +2,25 @@ package com.apps.quantitymeasurement;
 
 public class QuantityMeasurementApp {
 
-    public static Length add(
-            Length l1,
-            Length l2,
-            LengthUnit targetUnit) {
+    public static QuantityWeight add(
+            QuantityWeight w1,
+            QuantityWeight w2,
+            WeightUnit target) {
 
-        return l1.add(l2, targetUnit);
+        return w1.add(w2, target);
     }
 
-    public static Length convert(Length length, LengthUnit unit) {
-        return length.convertTo(unit);
+    public static QuantityWeight convert(
+            QuantityWeight w,
+            WeightUnit target) {
+
+        return w.convertTo(target);
     }
 
-    public static boolean compare(Length l1, Length l2) {
-        return l1.equals(l2);
+    public static boolean compare(
+            QuantityWeight w1,
+            QuantityWeight w2) {
+
+        return w1.equals(w2);
     }
 }
