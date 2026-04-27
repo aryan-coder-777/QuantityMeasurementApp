@@ -5,7 +5,6 @@ public class Length {
     private final double value;
     private final LengthUnit unit;
 
-    // Enum with conversion factors (base unit = inches)
     public enum LengthUnit {
         FEET(12.0),
         INCHES(1.0),
@@ -23,62 +22,56 @@ public class Length {
         }
     }
 
-    // Constructor
     public Length(double value, LengthUnit unit) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Invalid value");
-        }
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
+        if (unit == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid input");
         }
         this.value = value;
         this.unit = unit;
     }
 
     // Convert to base unit (inches)
-    private double convertToBaseUnit() {
-        double base = this.value * this.unit.getConversionFactor();
-        return Math.round(base * 100.0) / 100.0;
+    private double toBase() {
+        return Math.round(value * unit.getConversionFactor() * 100.0) / 100.0;
     }
 
-    // Compare
-    private boolean compare(Length other) {
-        return Double.compare(this.convertToBaseUnit(), other.convertToBaseUnit()) == 0;
+    // Convert from base (inches) to target unit
+    private double fromBase(double baseValue, LengthUnit targetUnit) {
+        return Math.round((baseValue / targetUnit.getConversionFactor()) * 100.0) / 100.0;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Length that = (Length) o;
-        return compare(that);
-    }
-
-    // 🔥 UC5 Conversion Method (instance)
+    // UC5 conversion
     public Length convertTo(LengthUnit targetUnit) {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null");
         }
-
-        double base = convertToBaseUnit();
-        double converted = base / targetUnit.getConversionFactor();
-
-        converted = Math.round(converted * 100.0) / 100.0;
-
+        double base = toBase();
+        double converted = fromBase(base, targetUnit);
         return new Length(converted, targetUnit);
     }
 
-    // 🔥 UC5 Static Conversion API
-    public static double convert(double value, LengthUnit from, LengthUnit to) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Invalid value");
-        }
-        if (from == null || to == null) {
-            throw new IllegalArgumentException("Units cannot be null");
+    // ✅ UC6 ADD METHOD
+    public Length add(Length that) {
+        if (that == null) {
+            throw new IllegalArgumentException("Length cannot be null");
         }
 
-        double base = value * from.getConversionFactor();
-        return base / to.getConversionFactor();
+        double sumBase = this.toBase() + that.toBase();
+
+        double result = fromBase(sumBase, this.unit);
+
+        return new Length(result, this.unit);
+    }
+
+    // Equality
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Length)) return false;
+
+        Length that = (Length) o;
+
+        return Double.compare(this.toBase(), that.toBase()) == 0;
     }
 
     @Override
