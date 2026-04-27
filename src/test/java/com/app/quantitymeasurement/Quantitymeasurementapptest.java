@@ -2,11 +2,19 @@ package com.apps.quantitymeasurement;
 
 public class QuantityMeasurementApp {
 
-    public static Length demonstrateLengthAddition(
+    public static Length add(
             Length l1,
             Length l2,
-            Length.LengthUnit targetUnit) {
+            LengthUnit targetUnit) {
 
         return l1.add(l2, targetUnit);
+    }
+
+    public static Length convert(Length length, LengthUnit unit) {
+        return length.convertTo(unit);
+    }
+
+    public static boolean compare(Length l1, Length l2) {
+        return l1.equals(l2);
     }
 }

@@ -2,50 +2,34 @@ package com.apps.quantitymeasurement;
 
 public class Length {
 
-    public enum LengthUnit {
-        FEET(12.0),
-        INCHES(1.0),
-        YARDS(36.0),
-        CENTIMETERS(0.393701);
-
-        private final double toInches;
-
-        LengthUnit(double toInches) {
-            this.toInches = toInches;
-        }
-
-        public double toBase() {
-            return toInches;
-        }
-    }
-
     private final double value;
     private final LengthUnit unit;
 
     public Length(double value, LengthUnit unit) {
-        if (unit == null || !Double.isFinite(value)) {
+        if (unit == null || Double.isNaN(value) || Double.isInfinite(value)) {
             throw new IllegalArgumentException("Invalid input");
         }
         this.value = value;
         this.unit = unit;
     }
 
-    public double toInches() {
-        return value * unit.toBase();
+    private double toBase() {
+        return unit.toBaseUnit(value);
     }
 
-    private double convertFromInches(double inches, LengthUnit target) {
-        return inches / target.toBase();
+    private double fromBase(double baseValue, LengthUnit targetUnit) {
+        return targetUnit.fromBaseUnit(baseValue);
     }
 
-    // UC7 METHOD
+    public Length convertTo(LengthUnit targetUnit) {
+        double base = toBase();
+        return new Length(fromBase(base, targetUnit), targetUnit);
+    }
+
     public Length add(Length other, LengthUnit targetUnit) {
-        if (other == null || targetUnit == null) {
-            throw new IllegalArgumentException("Null not allowed");
-        }
 
-        double sumInches = this.toInches() + other.toInches();
-        double result = convertFromInches(sumInches, targetUnit);
+        double sumBase = this.toBase() + other.toBase();
+        double result = fromBase(sumBase, targetUnit);
 
         return new Length(result, targetUnit);
     }
@@ -53,8 +37,9 @@ public class Length {
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Length)) return false;
+
         Length other = (Length) obj;
 
-        return Math.abs(this.toInches() - other.toInches()) < 0.0001;
+        return Math.abs(this.toBase() - other.toBase()) < 0.0001;
     }
 }

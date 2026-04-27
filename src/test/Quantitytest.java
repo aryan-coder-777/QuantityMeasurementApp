@@ -6,47 +6,37 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QuantityMeasurementAppTest {
 
     @Test
-    public void addFeetAndInchesToFeet() {
+    public void testFeetToInchesConversion() {
 
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l = new Length(1, LengthUnit.FEET);
 
         Length result =
-                QuantityMeasurementApp.demonstrateLengthAddition(
-                        l1, l2, Length.LengthUnit.FEET);
+                QuantityMeasurementApp.convert(l, LengthUnit.INCHES);
 
-        Length expected = new Length(2.0, Length.LengthUnit.FEET);
-
-        assertTrue(result.equals(expected));
+        assertEquals(new Length(12, LengthUnit.INCHES), result);
     }
 
     @Test
-    public void addFeetAndInchesToInches() {
+    public void testAdditionFeetInchesToFeet() {
 
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l1 = new Length(1, LengthUnit.FEET);
+        Length l2 = new Length(12, LengthUnit.INCHES);
 
         Length result =
-                QuantityMeasurementApp.demonstrateLengthAddition(
-                        l1, l2, Length.LengthUnit.INCHES);
+                QuantityMeasurementApp.add(l1, l2, LengthUnit.FEET);
 
-        Length expected = new Length(24.0, Length.LengthUnit.INCHES);
-
-        assertTrue(result.equals(expected));
+        assertEquals(new Length(2, LengthUnit.FEET), result);
     }
 
     @Test
-    public void addFeetAndInchesToYards() {
+    public void testAdditionFeetInchesToYards() {
 
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l1 = new Length(1, LengthUnit.FEET);
+        Length l2 = new Length(12, LengthUnit.INCHES);
 
         Length result =
-                QuantityMeasurementApp.demonstrateLengthAddition(
-                        l1, l2, Length.LengthUnit.YARDS);
+                QuantityMeasurementApp.add(l1, l2, LengthUnit.YARDS);
 
-        Length expected = new Length(0.6667, Length.LengthUnit.YARDS);
-
-        assertTrue(result.equals(expected));
+        assertTrue(result.equals(new Length(0.6667, LengthUnit.YARDS)));
     }
 }
