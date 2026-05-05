@@ -1,62 +1,51 @@
 package com.app.quantitymeasurement;
 
-public class Quantity {
+public class Quantity<U extends Unit> {
 
-    // 🔹 Feet class
-    public static class Feet {
-        private final double value;
+    private final double value;
+    private final U unit;
 
-        public Feet(double value) {
-            this.value = value;
+    public Quantity(double value, U unit) {
+        if (unit == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid input");
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            Feet other = (Feet) obj;
-            return Double.compare(this.value, other.value) == 0;
-        }
+        this.value = value;
+        this.unit = unit;
     }
 
-    // 🔹 Inches class (same as Feet)
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            Inches other = (Inches) obj;
-            return Double.compare(this.value, other.value) == 0;
-        }
+    public Quantity<U> convertTo(U targetUnit) {
+        double base = unit.toBase(value);
+        double converted = targetUnit.fromBase(base);
+        return new Quantity<>(converted, targetUnit);
     }
 
-    // 🔹 Method for Feet equality
-    public static void demonstrateFeetEquality() {
-        Feet f1 = new Feet(1.0);
-        Feet f2 = new Feet(1.0);
-
-        System.out.println("Feet Equal: " + f1.equals(f2));
+    public Quantity<U> add(Quantity<U> other) {
+        return add(other, this.unit);
     }
 
-    // 🔹 Method for Inches equality
-    public static void demonstrateInchesEquality() {
-        Inches i1 = new Inches(1.0);
-        Inches i2 = new Inches(1.0);
-
-        System.out.println("Inches Equal: " + i1.equals(i2));
+    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+        double base1 = unit.toBase(value);
+        double base2 = other.unit.toBase(other.value);
+        double sum = base1 + base2;
+        double result = targetUnit.fromBase(sum);
+        return new Quantity<>(result, targetUnit);
     }
 
-    // 🔹 Main method
-    public static void main(String[] args) {
-        demonstrateFeetEquality();
-        demonstrateInchesEquality();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Quantity<?> that = (Quantity<?>) o;
+
+        double base1 = this.unit.toBase(this.value);
+        double base2 = that.unit.toBase(that.value);
+
+        return Math.abs(base1 - base2) < 1e-6;
+    }
+
+    @Override
+    public String toString() {
+        return value + " " + unit;
     }
 }
