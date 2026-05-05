@@ -2,9 +2,9 @@ package com.app.quantitymeasurement;
 
 public enum VolumeUnit implements Unit {
 
-    LITRE(1.0),          // Base unit
-    MILLILITRE(0.001),  // 1 ml = 0.001 L
-    GALLON(3.78541);    // 1 gallon ≈ 3.78541 L
+    LITRE(1.0),
+    MILLILITRE(0.001),
+    GALLON(3.78541);
 
     private final double factor;
 

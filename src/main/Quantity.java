@@ -1,5 +1,7 @@
 package com.app.quantitymeasurement;
 
+import java.util.function.BiFunction;
+
 public class Quantity<U extends Unit> {
 
     private final double value;
@@ -13,38 +15,38 @@ public class Quantity<U extends Unit> {
         this.unit = unit;
     }
 
-    public Quantity<U> convertTo(U targetUnit) {
-        double base = unit.toBase(value);
-        double converted = targetUnit.fromBase(base);
-        return new Quantity<>(converted, targetUnit);
-    }
+    // 🔹 CENTRALIZED METHOD (UC13 CORE)
+    private Quantity<U> operate(Quantity<U> other, U targetUnit,
+                                BiFunction<Double, Double, Double> operation) {
 
-    public Quantity<U> add(Quantity<U> other) {
-        return add(other, this.unit);
-    }
-
-    public Quantity<U> add(Quantity<U> other, U targetUnit) {
         double base1 = unit.toBase(value);
         double base2 = other.unit.toBase(other.value);
-        double sum = base1 + base2;
-        double result = targetUnit.fromBase(sum);
-        return new Quantity<>(result, targetUnit);
-    }
 
-    // 🔹 SUBTRACTION
-    public Quantity<U> subtract(Quantity<U> other) {
-        return subtract(other, this.unit);
-    }
+        double resultBase = operation.apply(base1, base2);
 
-    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-        double base1 = unit.toBase(value);
-        double base2 = other.unit.toBase(other.value);
-        double result = base1 - base2;
-        double finalValue = targetUnit.fromBase(result);
+        double finalValue = targetUnit.fromBase(resultBase);
         return new Quantity<>(finalValue, targetUnit);
     }
 
-    // 🔹 DIVISION (Quantity / Quantity → double)
+    // 🔹 ADD
+    public Quantity<U> add(Quantity<U> other) {
+        return operate(other, this.unit, Double::sum);
+    }
+
+    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+        return operate(other, targetUnit, Double::sum);
+    }
+
+    // 🔹 SUBTRACT
+    public Quantity<U> subtract(Quantity<U> other) {
+        return operate(other, this.unit, (a, b) -> a - b);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        return operate(other, targetUnit, (a, b) -> a - b);
+    }
+
+    // 🔹 DIVIDE (Quantity / Quantity → double)
     public double divide(Quantity<U> other) {
         double base1 = unit.toBase(value);
         double base2 = other.unit.toBase(other.value);
@@ -56,15 +58,22 @@ public class Quantity<U extends Unit> {
         return base1 / base2;
     }
 
-    // 🔹 DIVISION (Quantity / number)
+    // 🔹 DIVIDE BY SCALAR
     public Quantity<U> divide(double divisor) {
         if (divisor == 0) {
             throw new ArithmeticException("Cannot divide by zero");
         }
-
         return new Quantity<>(value / divisor, unit);
     }
 
+    // 🔹 CONVERT
+    public Quantity<U> convertTo(U targetUnit) {
+        double base = unit.toBase(value);
+        double converted = targetUnit.fromBase(base);
+        return new Quantity<>(converted, targetUnit);
+    }
+
+    // 🔹 EQUALS
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

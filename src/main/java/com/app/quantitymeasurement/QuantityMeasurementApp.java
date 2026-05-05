@@ -24,7 +24,7 @@ public class QuantityMeasurementApp {
         Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
 
         System.out.println("Add Volume: " + v1.add(v2));
-        System.out.println("Convert to Gallon: " + v1.convertTo(VolumeUnit.GALLON));
         System.out.println("Subtract Volume: " + v1.subtract(v2));
+        System.out.println("Convert to Gallon: " + v1.convertTo(VolumeUnit.GALLON));
     }
 }
