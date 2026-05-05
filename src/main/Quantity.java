@@ -31,6 +31,40 @@ public class Quantity<U extends Unit> {
         return new Quantity<>(result, targetUnit);
     }
 
+    // 🔹 SUBTRACTION
+    public Quantity<U> subtract(Quantity<U> other) {
+        return subtract(other, this.unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        double base1 = unit.toBase(value);
+        double base2 = other.unit.toBase(other.value);
+        double result = base1 - base2;
+        double finalValue = targetUnit.fromBase(result);
+        return new Quantity<>(finalValue, targetUnit);
+    }
+
+    // 🔹 DIVISION (Quantity / Quantity → double)
+    public double divide(Quantity<U> other) {
+        double base1 = unit.toBase(value);
+        double base2 = other.unit.toBase(other.value);
+
+        if (base2 == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+
+        return base1 / base2;
+    }
+
+    // 🔹 DIVISION (Quantity / number)
+    public Quantity<U> divide(double divisor) {
+        if (divisor == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+
+        return new Quantity<>(value / divisor, unit);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
